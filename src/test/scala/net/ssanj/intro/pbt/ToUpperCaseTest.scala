@@ -27,7 +27,7 @@ final class ToUpperCaseTest extends Matchers with WordSpecLike with ToUpperCase 
 
     "not change unicode characters" when {
       "given an unicode words" in {
-        val unicodeWord = "ስሶሷሸሹቀ"
+        val unicodeWord = ('\u1230' to '\u1240').mkString
         toUpperCase(unicodeWord) should be (unicodeWord)
       }
     }
