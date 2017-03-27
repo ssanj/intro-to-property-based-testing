@@ -4,7 +4,12 @@ import org.scalatest.{Matchers, WordSpecLike}
 
 final class ToUpperCaseTest extends Matchers with WordSpecLike with ToUpperCase {
 
-  val toUpperCase = scalaToUpper _
+  // val toUpperCase = scalaToUpper _
+  // val toUpperCase = brokenToUpper _
+  // val toUpperCase = filterOutLowerCase _
+  // val toUpperCase = swappedToUpper _
+  // val toUpperCase = filterOutNonLowerCase _
+  val toUpperCase = asciiToUpper _
 
   "ToUpperCase" should {
     "make a lowercase word upper case" when {
@@ -28,7 +33,7 @@ final class ToUpperCaseTest extends Matchers with WordSpecLike with ToUpperCase 
     "not change unicode characters" when {
       "given an unicode words" in {
         val unicodeWord = ('\u1230' to '\u1240').mkString
-        toUpperCase(unicodeWord) should be (unicodeWord)
+          toUpperCase(unicodeWord) should be (unicodeWord)
       }
     }
 
