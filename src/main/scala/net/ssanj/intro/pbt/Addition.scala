@@ -12,5 +12,5 @@ trait Addition {
 
   def negAdd(x: Int, y: Int): Int = if (x < 0) Math.abs(x) + y else x + y
 
-  def hitchAdd(x: Int, y: Int): Int = if ((x + y) == 42) y -x else x + y
+  def hitchAdd(x: Int, y: Int): Int = if ((x + y) == 42) y - x else x + y
 }
