@@ -21,4 +21,17 @@ object Gens {
       1 -> Gen.alphaNumStr,
       1 -> genWordStr
   )
+
+  def genSmallerNumber(n: Int): Gen[Int] = Gen.choose(-n, n)
+
+  def genSmallerNumberPairs(n: Int): Gen[(Int, Int)] = for {
+    one <- genSmallerNumber(n)
+    two <- genSmallerNumber(n)
+  } yield (one, two)
+
+  def genSmallerNumberTriple(n: Int): Gen[(Int, Int, Int)] = for {
+    one   <- genSmallerNumber(n)
+    two   <- genSmallerNumber(n)
+    three <- genSmallerNumber(n)
+  } yield (one, two, three)
 }

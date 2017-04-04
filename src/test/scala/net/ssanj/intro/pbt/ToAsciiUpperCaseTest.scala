@@ -2,7 +2,7 @@ package net.ssanj.intro.pbt
 
 import org.scalatest.{Matchers, WordSpecLike}
 
-final class ToUpperCaseTest extends Matchers with WordSpecLike with ToAsciiUpperCase {
+final class ToAsciiUpperCaseTest extends Matchers with WordSpecLike with ToAsciiUpperCase {
 
   val toUpperCase = scalaToUpper _
   // val toUpperCase = brokenToUpper _
@@ -26,7 +26,6 @@ final class ToUpperCaseTest extends Matchers with WordSpecLike with ToAsciiUpper
 
     "not change word" when {
       "given an upper case word" in {
-        println(toUpperCase("THIS IS UPPERCASE"))
         toUpperCase("THIS IS UPPERCASE") should be ("THIS IS UPPERCASE")
       }
     }

@@ -5,17 +5,19 @@ import org.scalacheck.Prop._
 
 object AdditionProps extends Properties("Addition") with Addition {
 
-  val add = scalaAdd _
+
+  // val add = scalaAdd _
   // val add = leftAdd _
   // val add = rightAdd _
   // val add = zeroAdd _
   // val add = negAdd _
-  // val add = hitchAdd _
+  val add = hitchAdd _
 
   property("commutative") = Prop.forAll { (n1: Int, n2: Int) =>
-    add(n1, n2) ?= add(n2, n1)
+    Prop.collect(s"n1:${n1}, n2:${n2}") {
+      add(n1, n2) ?= add(n2, n1)
+    }
   }
-
   property("left identity") = Prop.forAll { n: Int =>
     add(0, n) ?= n
   }
