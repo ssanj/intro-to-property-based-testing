@@ -1,7 +1,17 @@
 package net.ssanj.intro.pbt
 
-import org.scalacheck.{Prop, Properties }
-import org.scalacheck.Prop.BooleanOperators
+import org.scalacheck.{Prop, Properties}
+import org.scalacheck.Prop._
+
+/**
+ * What are the requirements of toUpperCase?
+ *
+ * 1. All lowercase characters must be made uppercase.
+ * 2. All cnon-lowercase characters should be remain in the same case.
+ * 3. The length of the String should remain unchanged. (No characters dropped or added)
+ * 4. All characters should retain their original position before and after uppercasing.
+ *
+ */
 
 object ToUpperCaseProps extends Properties("ToUpperCase") with ToAsciiUpperCase {
 
@@ -14,16 +24,20 @@ object ToUpperCaseProps extends Properties("ToUpperCase") with ToAsciiUpperCase 
   // val toUpperCase = filterOutNonLowerCase _
   val toUpperCase = asciiToUpper _
 
+  private def all(propSeq: Seq[Prop]): Prop = Prop.all(propSeq:_*)
+
   property("All lowercase characters must be made uppercase") =
     Prop.forAll(genString) { string: String =>
       val lowerCaseCharsWithIndex = string.zipWithIndex.filter{ case (c, i) => c >= 'a' && c <= 'z' }
       val upperCasedString = toUpperCase(string)
 
-      lowerCaseCharsWithIndex.map { case (c, i) =>
+      val properties = lowerCaseCharsWithIndex.map { case (c, i) =>
         val mappedChar = upperCasedString(i)
         (mappedChar >= 'A' && mappedChar <= 'Z') :|
           s"${string}(${i}) == '${c}' is not UpperCase: ${mappedChar}"
-      }.foldLeft(Prop(true))(_.&&(_))
+      }
+
+      all(properties)
     }
 
   property("All characters should retain their order") =
@@ -38,14 +52,19 @@ object ToUpperCaseProps extends Properties("ToUpperCase") with ToAsciiUpperCase 
       val nonLowerCaseCharsWithIndex = string.zipWithIndex.filterNot{ case (c, i) => c >= 'a' && c <= 'z' }
       val upperCasedString = toUpperCase(string)
 
-      nonLowerCaseCharsWithIndex.map { case (c, i) =>
+      val properties = nonLowerCaseCharsWithIndex.map { case (c, i) =>
         val originalChar = upperCasedString(i)
         (originalChar == c) :| s"[${originalChar},${i}] != [${c}]"
-      }.foldLeft(Prop(true))(_.&&(_))
+      }
+
+      all(properties)
     }
 
-  //What are the requirements of toUpperCase?
-  //1. All lowercase characters must be made uppercase. - How can we check if something is uppercase?
-  //2. All non-lowercase characters should be remain unchanged.
-  //3. The length of the String should remain unchanged.
+    property("should not change length") = {
+        Prop.forAll(genString) {  string: String =>
+          val upped = toUpperCase(string)
+          (string.length =? upped.length) :|
+            s"length before uppercase: ${string.length}, after: ${upped.length}"
+        }
+    }
   }
