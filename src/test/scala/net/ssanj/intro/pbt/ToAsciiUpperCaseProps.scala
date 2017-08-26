@@ -7,7 +7,7 @@ import org.scalacheck.Prop._
  * What are the requirements of toUpperCase?
  *
  * 1. All lowercase characters must be made uppercase.
- * 2. All cnon-lowercase characters should be remain in the same case.
+ * 2. All non-lowercase characters should be remain in the same case.
  * 3. The length of the String should remain unchanged. (No characters dropped or added)
  * 4. All characters should retain their original position before and after uppercasing.
  *
