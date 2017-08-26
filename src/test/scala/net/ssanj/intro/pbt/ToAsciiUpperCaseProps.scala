@@ -44,7 +44,7 @@ object ToUpperCaseProps extends Properties("ToUpperCase") with ToAsciiUpperCase 
     Prop.forAll(genString) { string: String =>
       val uppedLower    = toUpperCase(string).toLowerCase
       val originalLower = string.toLowerCase
-      (uppedLower == originalLower) :| s"[${uppedLower}] != [${originalLower}]"
+      uppedLower ?= originalLower
     }
 
   property("All non lowercase characters must be at the same positions") =
