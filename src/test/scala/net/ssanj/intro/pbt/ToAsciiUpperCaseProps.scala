@@ -5,51 +5,75 @@ import org.scalacheck.Prop._
 
 /**
  * What are the requirements of toUpperCase?
- *
- * 1. All lowercase characters must be made uppercase.
- * 2. All non-lowercase characters should be remain in the same case.
- * 3. The length of the String should remain unchanged. (No characters dropped or added)
- * 4. All characters should retain their original position before and after uppercasing.
- *
+ * 1. The length of the String should remain unchanged.
+ * 2. All lowercase characters must be converted to uppercase.
+ * 3. All lowercase characters must correspond to their uppercase equivalents.
+ * 4. All lowercase characters must be uppercased in the same locations.
+ * 5. All non-lowercase characters should be remain unchanged in the same locations.
+ * 6. Uppercasing once should be the same as uppercasing twice.
  */
 
-object ToUpperCaseProps extends Properties("ToUpperCase") with ToAsciiUpperCase {
+object ToAsciiUpperCaseProps extends Properties("ToUpperCase") with ToAsciiUpperCase {
 
   import Gens._
 
-  // val toUpperCase = scalaToUpper _
-  // val toUpperCase = brokenToUpper _
+  // val toUpperCase = noOpToUpper _
+  // val toUpperCase = emptyStringToUpper _
+  // val toUpperCase = skipLowerYandZToUpper _
+  // val toUpperCase = transposeLowerToUpper _
+  // val toUpperCase = transposeNonLowerToUpper _
   // val toUpperCase = filterOutLowerCase _
-  // val toUpperCase = swappedToUpper _
   // val toUpperCase = filterOutNonLowerCase _
+  // val toUpperCase = addCharsToUpper _
   val toUpperCase = asciiToUpper _
+  // val toUpperCase = scalaToUpper _
 
   private def all(propSeq: Seq[Prop]): Prop = Prop.all(propSeq:_*)
 
+  property("should not change length") = {
+      Prop.forAll(genString) {  string: String =>
+        val upped = toUpperCase(string)
+        (string.length =? upped.length) :|
+          s"length before uppercase: ${string.length}, after: ${upped.length}"
+      }
+  }
+
   property("All lowercase characters must be made uppercase") =
     Prop.forAll(genString) { string: String =>
-      val lowerCaseCharsWithIndex = string.zipWithIndex.filter{ case (c, i) => c >= 'a' && c <= 'z' }
+      val lowerCaseCharsWithIndex = string.zipWithIndex.filter{ case (c, i) => isAsciiLower(c) }
       val upperCasedString = toUpperCase(string)
 
       val properties = lowerCaseCharsWithIndex.map { case (c, i) =>
         val mappedChar = upperCasedString(i)
-        (mappedChar >= 'A' && mappedChar <= 'Z') :|
+        isAsciiUpper(mappedChar) :|
           s"${string}(${i}) == '${c}' is not UpperCase: ${mappedChar}"
       }
 
       all(properties)
     }
 
-  property("All characters should retain their order") =
+  property("All lowercase characters must correspond to their uppercase equivalents") =
+      Prop.forAll(genString) { string: String =>
+        val lowerCaseCharsWithIndex = string.zipWithIndex.filter{ case (c, i) => isAsciiLower(c) }
+        val upped = toUpperCase(string)
+
+        val properties = lowerCaseCharsWithIndex.map {
+          case (c, i) => c - 'a' ?= upped(i) - 'A'
+        }
+
+        all(properties)
+      }
+
+  property("All lowercase characters must be uppercased in the same locations") =
     Prop.forAll(genString) { string: String =>
       val uppedLower    = toUpperCase(string).toLowerCase
       val originalLower = string.toLowerCase
       uppedLower ?= originalLower
     }
 
-  property("All non lowercase characters must be at the same positions") =
+  property("All non-lowercase characters should be remain unchanged in the same locations") =
     Prop.forAll(genString) { string: String =>
-      val nonLowerCaseCharsWithIndex = string.zipWithIndex.filterNot{ case (c, i) => c >= 'a' && c <= 'z' }
+      val nonLowerCaseCharsWithIndex = string.zipWithIndex.filterNot{ case (c, i) => isAsciiLower(c) }
       val upperCasedString = toUpperCase(string)
 
       val properties = nonLowerCaseCharsWithIndex.map { case (c, i) =>
@@ -60,11 +84,8 @@ object ToUpperCaseProps extends Properties("ToUpperCase") with ToAsciiUpperCase 
       all(properties)
     }
 
-    property("should not change length") = {
-        Prop.forAll(genString) {  string: String =>
-          val upped = toUpperCase(string)
-          (string.length =? upped.length) :|
-            s"length before uppercase: ${string.length}, after: ${upped.length}"
-        }
+  property("Uppercasing once should be the same as uppercasing twice") =
+    Prop.forAll(genString) { string: String =>
+      toUpperCase(string) ?= toUpperCase(toUpperCase(string))
     }
   }
