@@ -15,9 +15,9 @@ object SmallerAdditionProps extends Properties("Addition") with Addition {
   // val add = hitchAdd _
 
   property("commutative") = Prop.forAll(genSmallerNumberPairs(100)) { case ((n1: Int, n2: Int)) =>
-    Prop.collect(s"n1:${n1}, n2:${n2}") {
-      add(n1, n2) ?= add(n2, n1)
-    }
+    // Prop.collect(s"n1:${n1}, n2:${n2}") {
+    add(n1, n2) ?= add(n2, n1)
+    // }
   }
 
   property("left identity") = Prop.forAll(genSmallerNumber(100)) { n: Int =>
