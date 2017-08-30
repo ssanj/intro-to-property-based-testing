@@ -10,7 +10,10 @@ trait Diamond {
 
   def instances(supplied: Char): Int = if (supplied == start) 1 else 2
 
-  def betweenSpace(supplied: Char): Int = supplied - start
+  def betweenSpace(supplied: Char): Int = {
+    val diff = supplied - start
+    if (diff <= 1) diff else (2 * diff) - 1
+  }
 
   def outerSpace(supplied: Char, current: Char): Int = supplied - current
 
@@ -21,7 +24,7 @@ trait Diamond {
     val outside = " " * outerSpace(supplied, current)
     val values  = (1 to instances(current)).map(_ => current)
 
-    values.mkString(outside, inside, "")
+    values.mkString(outside, inside, outside)
   }
 
   def printDiamond(supplied: Char): String = {

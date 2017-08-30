@@ -19,20 +19,29 @@ import org.scalacheck.Prop._
 
 object DiamondProps extends Properties("Diamond") with Diamond {
 
- private def genCharWithoutA: Gen[Char] = Gen.choose('B', 'Z')
+  private final case class DiamondChar(value: Char)
+
+  private def genCharWithoutA: Gen[DiamondChar] = Gen.choose('B', 'Z').map(DiamondChar)
+
+  private def genAlphaUpperChar: Gen[DiamondChar] = Gen.alphaUpperChar.map(DiamondChar)
+
+  //TODO: Write Shrinker for DiamonChar
 
   property("Given a letter, the diamond will start with 'A'") =
-    forAllNoShrink(Gen.alphaUpperChar) { ch: Char =>
+    forAllNoShrink(genAlphaUpperChar) { dc: DiamondChar =>
+      val ch = dc.value
       printDiamond(ch).split("\n").head.contains("A")
     }
 
   property("Given a letter, the diamond will end with 'A'") =
-    forAllNoShrink(Gen.alphaUpperChar) { ch: Char =>
+    forAllNoShrink(genAlphaUpperChar) { dc: DiamondChar =>
+      val ch = dc.value
       printDiamond(ch).split("\n").last.contains("A")
     }
 
   property("The widest point will only have the supplied letter and spaces") =
-    forAllNoShrink(genCharWithoutA) { ch: Char =>
+    forAllNoShrink(genCharWithoutA) { dc: DiamondChar =>
+      val ch = dc.value
       val lines = printDiamond(ch).split("\n")
       val ((wline, _), windex) = lines.map(l => (l, l.trim.length)).zipWithIndex.maxBy(_._1._2)
 
@@ -40,7 +49,8 @@ object DiamondProps extends Properties("Diamond") with Diamond {
     }
 
   property("The lines above the widest line will be a mirror image of the lines below it") =
-    forAllNoShrink(genCharWithoutA) { ch: Char =>
+    forAllNoShrink(genCharWithoutA) { dc: DiamondChar =>
+      val ch = dc.value
       val lines = printDiamond(ch).split("\n")
       val (_, windex) = lines.map(_.trim.length).zipWithIndex.maxBy(_._1)
       val before = lines.slice(0, windex).toList
