@@ -12,10 +12,9 @@ import org.scalacheck.Prop._
  * 4. Characters will be listed in ascending order until given letter and then descend
  * 5. The lines above the widest line will be a mirror image of the lines below it
  * 6. Each line should have two spaces more in-between chars than the line above it until widest line
- * 7. Each line should have one space less outside chars than the line above it
+ * 7. Each line should have two space on the less outside chars than the line above it
  * 8. All unhandled inputs should return 'A'
- * 9. The number of lines should be (if A => 1, else => (2 * diff) + 1)
- * 10. Always an odd number of lines
+ * 9. The number of lines should be the length of the first line
  */
 
 object DiamondProps extends Properties("Diamond") with Diamond {
@@ -38,7 +37,8 @@ object DiamondProps extends Properties("Diamond") with Diamond {
       case DiamondChar(ch) => ('B' until ch).reverse.map(DiamondChar).toStream
     }
 
-  //How do we handle Shrinking special cases?
+  //TODO: How do we handle Shrinking special cases?
+  //TODO: Do we need a exclusive Gen for choose?
 
   property("Given a letter, the diamond will start with 'A'") =
     forAll(genChar) { dc: DiamondChar =>
@@ -83,4 +83,13 @@ object DiamondProps extends Properties("Diamond") with Diamond {
         case (first, second) => second._1 - first._1 == 2
       }
     }(implicitly, shrinkDiamondCharWithoutA, implicitly)
+
+ property("The number of lines should be the length of the any line") =
+  forAll(genChar) { dc: DiamondChar =>
+    val ch    = dc.value
+    val lines = printDiamond(ch).split("\n")
+    forAll(Gen.choose(0, lines.length - 1)) { index: Int =>
+      lines(index).length ?= lines.length
+    }
+  }
 }
