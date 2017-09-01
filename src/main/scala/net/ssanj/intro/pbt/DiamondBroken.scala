@@ -39,7 +39,7 @@ trait DiamondBroken {
       val chars  = previousChars(supplied) //A
       val before = chars.foldLeft(Seq.empty[String])((acc, c) => acc :+ printChar(supplied, c))
       val after  = before.reverse
-      // val after  = before.reverse //don't reverse
+      // val after  = before //don't reverse
       val line   = printChar(supplied, supplied)
       (before ++ (line +: after)).mkString("\n")
     } //else { "A\nA" } //return default
