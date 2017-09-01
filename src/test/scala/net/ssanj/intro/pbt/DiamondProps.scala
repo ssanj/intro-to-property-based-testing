@@ -25,6 +25,12 @@ object DiamondProps extends Properties("Diamond") with Diamond {
 
   private def genChar: Gen[UpperChar] = Gen.alphaUpperChar.map(UpperChar(_))
 
+  private def upCharDiamondLines(uc: UpperChar): Seq[String] = diamondLines(uc.value)
+
+  private def upCharWithoutADiamondLines(ucwa: UpperCharWithoutA): Seq[String] = diamondLines(ucwa.value)
+
+  private def diamondLines(ch: Char): Seq[String] = printDiamond(ch).split("\n")
+
   property("Given a letter, the diamond will start with 'A'") =
     forAll { ch: Char =>
       printDiamond(ch).split("\n").head.contains("A")
@@ -32,14 +38,13 @@ object DiamondProps extends Properties("Diamond") with Diamond {
 
   property("Given a letter, the diamond will end with 'A'") =
     forAll(genChar) { uc: UpperChar =>
-      val ch = uc.value
-      printDiamond(ch).split("\n").last.contains("A")
+      upCharDiamondLines(uc).last.contains("A")
     }
 
   property("The widest point will only have the supplied letter and spaces in between") =
     forAll(genCharWithoutA) { ucwa: UpperCharWithoutA =>
       val ch = ucwa.value
-      val lines = printDiamond(ch).split("\n")
+      val lines = upCharWithoutADiamondLines(ucwa)
       val ((wline, _), windex) = lines.map(l => (l, l.trim.length)).zipWithIndex.maxBy(_._1._2)
 
       ((wline.count(_ == ch) ?= 2) :| s"expected 2 [$ch] but got [$wline]") && wline.filterNot(_ == ch).trim.isEmpty :| s"expected only spaces other than [$ch] but got [$wline]"
@@ -47,8 +52,7 @@ object DiamondProps extends Properties("Diamond") with Diamond {
 
   property("Any line but the first and last will only have one repeated letter and spaces") =
     forAll(genCharWithoutA) { ucwa: UpperCharWithoutA =>
-      val ch = ucwa.value
-      val lines = printDiamond(ch).split("\n")
+      val lines = upCharWithoutADiamondLines(ucwa)
       val remaining = lines.tail.init //drop 'A's
       val rangeWithoutA = ('B' to 'Z')
 
@@ -62,17 +66,15 @@ object DiamondProps extends Properties("Diamond") with Diamond {
     }
 
   property("Characters will be listed in ascending order until given letter") =
-    forAll(genCharWithoutA) { uc: UpperCharWithoutA =>
-      val ch = uc.value
-      val lines = printDiamond(ch).split("\n")
+    forAll(genCharWithoutA) { ucwa: UpperCharWithoutA =>
+      val lines = upCharWithoutADiamondLines(ucwa)
       val uniqueChars = lines.map(_.filterNot(_ == ' ').head).slice(0, lines.length / 2)
       uniqueChars.zip(uniqueChars.tail).forall { case (c1, c2) => c1 < c2 }
     }
 
   property("The lines above the widest line will be a mirror image of the lines below it") =
     forAll(genCharWithoutA) { ucwa: UpperCharWithoutA =>
-      val ch = ucwa.value
-      val lines = printDiamond(ch).split("\n")
+      val lines = upCharWithoutADiamondLines(ucwa)
       val (_, windex) = lines.map(_.trim.length).zipWithIndex.maxBy(_._1)
       val before = lines.slice(0, windex).toList
       val after  = lines.slice(windex + 1, lines.length).reverse.toList
@@ -81,8 +83,7 @@ object DiamondProps extends Properties("Diamond") with Diamond {
 
   property("Each line should have two spaces more in-between chars than the line above it until widest line") =
     forAll(genCharWithoutA) { ucwa: UpperCharWithoutA =>
-      val ch     = ucwa.value
-      val lines  = printDiamond(ch).split("\n").map(_.trim)
+      val lines  = upCharWithoutADiamondLines(ucwa).map(_.trim)
       val mid    = lines.length / 2 //always odd
       val above  = lines.slice(0, mid + 1)
 
@@ -94,8 +95,7 @@ object DiamondProps extends Properties("Diamond") with Diamond {
 
  property("The number of lines should be the length of the any line") =
   forAll(genChar) { uc: UpperChar =>
-    val ch    = uc.value
-    val lines = printDiamond(ch).split("\n")
+    val lines = upCharDiamondLines(uc)
     forAll(Gen.choose(0, lines.length - 1)) { index: Int =>
       lines(index).length ?= lines.length
     }
