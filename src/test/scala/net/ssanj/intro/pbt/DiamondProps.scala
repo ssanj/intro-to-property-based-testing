@@ -1,6 +1,6 @@
 package net.ssanj.intro.pbt
 
-import org.scalacheck.{Gen, Properties}
+import org.scalacheck.{Gen, Prop, Properties}
 import org.scalacheck.Prop._
 
 /**
@@ -20,7 +20,7 @@ import org.scalacheck.Prop._
 
 //TODO: Move common code out.
 
-object DiamondProps extends Properties("Diamond") with Diamond {
+object DiamondProps extends Properties("Diamond") with DiamondBroken {
 
   private def genCharWithoutA: Gen[UpperCharWithoutA] = Gen.choose('B', 'Z').map(UpperCharWithoutA(_))
 
@@ -31,6 +31,8 @@ object DiamondProps extends Properties("Diamond") with Diamond {
   private def upCharWithoutADiamondLines(ucwa: UpperCharWithoutA): Seq[String] = diamondLines(ucwa.value)
 
   private def diamondLines(ch: Char): Seq[String] = printDiamond(ch).split("\n")
+
+  private def all(propSeq: Seq[Prop]): Prop = Prop.all(propSeq:_*)
 
   property("Given a letter, the diamond will start with 'A'") =
     forAll { ch: Char =>
@@ -48,7 +50,7 @@ object DiamondProps extends Properties("Diamond") with Diamond {
       val lines = upCharWithoutADiamondLines(ucwa)
       val ((wline, _), windex) = lines.map(l => (l, l.trim.length)).zipWithIndex.maxBy(_._1._2)
 
-      ((wline.count(_ == ch) ?= 2) :| s"expected 2 [$ch] but got [$wline]") && wline.filterNot(_ == ch).trim.isEmpty :| s"expected only spaces other than [$ch] but got [$wline]"
+      ((wline.count(_ == ch) ?= 2) :| s"> EXPECTED: 2 '$ch'\n> GOT: $wline") && wline.filterNot(_ == ch).trim.isEmpty :| s"expected only spaces other than [$ch] but got [$wline]"
     }
 
   property("Any line but the first and last will only have one repeated letter and spaces") =
@@ -57,13 +59,15 @@ object DiamondProps extends Properties("Diamond") with Diamond {
       val remaining = lines.tail.init //drop 'A's
       val rangeWithoutA = ('B' to 'Z')
 
-      remaining.forall { l =>
-        val unique = l.toSet
-        l.filterNot(_ == ' ').length == 2 &&
-        unique.size == 2 &&
-        unique.contains(' ') &&
-        unique.exists(rangeWithoutA.contains)
-      }
+      all(
+        remaining.map { l =>
+          val unique = l.toSet
+          (l.filterNot(_ == ' ').length == 2 &&
+          unique.size == 2 &&
+          unique.contains(' ') &&
+          unique.exists(rangeWithoutA.contains)) :| s"> LINE: $l"
+        }
+      )
     }
 
   property("Characters will be listed in ascending order until given letter") =
@@ -104,14 +108,16 @@ object DiamondProps extends Properties("Diamond") with Diamond {
  property("Each line should be a mirror image of half itself") =
   forAll(genCharWithoutA) { ucwa: UpperCharWithoutA =>
     val lines = upCharWithoutADiamondLines(ucwa)
-    lines.forall {
-      case l =>
-        val length = l.length
-        val half   = length / 2
-        val left   = l.slice(0, half) //split each line down the middle
-        val right  = l.slice(half + 1, length)
-        left == right.reverse
-    }
+    all(
+      lines.map {
+        case l =>
+          val length = l.length
+          val half   = length / 2
+          val left   = l.slice(0, half) //split each line down the middle
+          val right  = l.slice(half + 1, length)
+          (left == right.reverse) :| s"> LEFT: $left\n> RIGHT: $right"
+      }
+    )
   }
 
  property("The number of lines should be the length of the any line") =

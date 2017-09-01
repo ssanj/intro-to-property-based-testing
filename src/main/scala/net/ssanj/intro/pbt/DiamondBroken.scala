@@ -10,7 +10,7 @@ trait DiamondBroken {
 
   def instances(supplied: Char): Int = if (supplied == start) 1 else 2
 
-//  def instances(supplied: Char): Int = if (supplied == start) 1 else 3 //add extra instances
+ // def instances(supplied: Char): Int = if (supplied == start) 1 else 3 //add extra instances
 
   def betweenSpace(supplied: Char): Int = {
     val diff = supplied - start
@@ -21,13 +21,15 @@ trait DiamondBroken {
 
   def previousChars(supplied: Char): Seq[Char] = (start until supplied)
 
+  // def previousChars(supplied: Char): Seq[Char] = (start until supplied).reverse //reverse order
+
   def printChar(supplied: Char, current: Char): String = {
     val inside  = " " * betweenSpace(current)
     val outside = " " * outerSpace(supplied, current)
     val values  = (1 to instances(current)).map(_ => current)
 
-    // values.mkString(outside, inside, "") //remove inside space
-    // values.mkString(outside, "", outside) //remove outside space
+    // values.mkString(outside, inside, "") //remove outside space
+    // values.mkString(outside, "", outside) //remove inside space
     values.mkString(outside, inside, outside)
   }
 
