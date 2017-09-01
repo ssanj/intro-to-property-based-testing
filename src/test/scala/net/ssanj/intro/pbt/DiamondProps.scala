@@ -1,6 +1,6 @@
 package net.ssanj.intro.pbt
 
-import org.scalacheck.{Gen, Properties, Shrink}
+import org.scalacheck.{Gen, Properties}
 import org.scalacheck.Prop._
 
 /**
@@ -19,42 +19,25 @@ import org.scalacheck.Prop._
 
 object DiamondProps extends Properties("Diamond") with Diamond {
 
-  private final case class DiamondChar(value: Char)
-  private final case class DiamondCharWithoutA(value: Char)
+  private def genCharWithoutA: Gen[UpperCharWithoutA] = Gen.choose('B', 'Z').map(UpperCharWithoutA(_))
 
-  private def genCharWithoutA: Gen[DiamondChar] = Gen.choose('B', 'Z').map(DiamondChar)
-
-  private def genChar: Gen[DiamondChar] = Gen.alphaUpperChar.map(DiamondChar)
-
-  private implicit def shrinkDiamondChar: Shrink[DiamondChar] =
-    Shrink {
-      case DiamondChar(ch) => ('A' until ch).reverse.map(DiamondChar).toStream
-    }
-
-  private def shrinkDiamondCharWithoutA: Shrink[DiamondChar] =
-    Shrink {
-      case DiamondChar('A') => Stream.Empty
-      case DiamondChar(ch) => ('B' until ch).reverse.map(DiamondChar).toStream
-    }
-
-  //TODO: How do we handle Shrinking special cases?
-  //TODO: Do we need a exclusive Gen for choose?
+  private def genChar: Gen[UpperChar] = Gen.alphaUpperChar.map(UpperChar(_))
 
   property("Given a letter, the diamond will start with 'A'") =
-    forAll(genChar) { dc: DiamondChar =>
-      val ch = dc.value
+    forAll(genChar) { uc: UpperChar =>
+      val ch = uc.value
       printDiamond(ch).split("\n").head.contains("A")
     }
 
   property("Given a letter, the diamond will end with 'A'") =
-    forAll(genChar) { dc: DiamondChar =>
-      val ch = dc.value
+    forAll(genChar) { uc: UpperChar =>
+      val ch = uc.value
       printDiamond(ch).split("\n").last.contains("A")
     }
 
   property("The widest point will only have the supplied letter and spaces") =
-    forAll(genCharWithoutA) { dc: DiamondChar =>
-      val ch = dc.value
+    forAll(genCharWithoutA) { uc: UpperCharWithoutA =>
+      val ch = uc.value
       val lines = printDiamond(ch).split("\n")
       val ((wline, _), windex) = lines.map(l => (l, l.trim.length)).zipWithIndex.maxBy(_._1._2)
 
@@ -62,8 +45,8 @@ object DiamondProps extends Properties("Diamond") with Diamond {
     }
 
   property("The lines above the widest line will be a mirror image of the lines below it") =
-    forAll(genCharWithoutA) { dc: DiamondChar =>
-      val ch = dc.value
+    forAll(genCharWithoutA) { uc: UpperCharWithoutA =>
+      val ch = uc.value
       val lines = printDiamond(ch).split("\n")
       val (_, windex) = lines.map(_.trim.length).zipWithIndex.maxBy(_._1)
       val before = lines.slice(0, windex).toList
@@ -72,21 +55,21 @@ object DiamondProps extends Properties("Diamond") with Diamond {
     }
 
   property("Each line should have two spaces more in-between chars than the line above it until widest line") =
-    forAll(genCharWithoutA) { dc: DiamondChar =>
-      val ch     = dc.value
+    forAll(genCharWithoutA) { uc: UpperCharWithoutA =>
+      val ch     = uc.value
       val lines  = printDiamond(ch).split("\n").map(_.trim)
       val mid    = lines.length / 2 //always odd
       val above  = lines.slice(0, mid + 1)
 
       val spaceWithLineIndex = above.tail.map(_.count(_ == ' ')).zipWithIndex
       spaceWithLineIndex.zip(spaceWithLineIndex.tail).forall{
-        case (first, second) => second._1 - first._1 == 2
+        case (first, second) => second._1 - first._1 == 1
       }
-    }(implicitly, shrinkDiamondCharWithoutA, implicitly)
+    }
 
  property("The number of lines should be the length of the any line") =
-  forAll(genChar) { dc: DiamondChar =>
-    val ch    = dc.value
+  forAll(genChar) { uc: UpperChar =>
+    val ch    = uc.value
     val lines = printDiamond(ch).split("\n")
     forAll(Gen.choose(0, lines.length - 1)) { index: Int =>
       lines(index).length ?= lines.length
