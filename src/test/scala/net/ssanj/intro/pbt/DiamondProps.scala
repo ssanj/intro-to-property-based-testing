@@ -6,15 +6,16 @@ import org.scalacheck.Prop._
 /**
  * What the properties of a Diamond?
  *
- * 1. Given any letter, the diamond will start with 'A'
- * 2. Given a valid letter, the diamond will end with 'A'
- * 3. The widest point will only have the supplied letter and spaces in between
- * 4. Any line but the first and last will only have one repeated letter and spaces
- * 5. Characters will be listed in ascending order until given letter
- * 6. The lines above the widest line will be a mirror image of the lines below it
- * 7. Each line should have two spaces more in-between chars than the line above it until widest line
- * 8. Each line should have two space on the less outside chars than the line above it
- * 9. The number of lines should be the length of the any line
+ * 1.  Given any letter, the diamond will start with 'A'
+ * 2.  Given a valid letter, the diamond will end with 'A'
+ * 3.  The widest point will only have the supplied letter and spaces in between
+ * 4.  Any line but the first and last will only have one repeated letter and spaces
+ * 5.  Characters will be listed in ascending order until given letter
+ * 6.  The lines above the widest line will be a mirror image of the lines below it
+ * 7.  Each line should have two spaces more in-between chars than the line above it until widest line
+ * 8.  Each line should have two space on the less outside chars than the line above it until widest line
+ * 9.  Each line should be a mirror image of half itself
+ * 10. The number of lines should be the length of the any line
  */
 
 //TODO: Move common code out.
@@ -92,6 +93,26 @@ object DiamondProps extends Properties("Diamond") with Diamond {
         case (first, second) => second._1 - first._1 == 2
       }
     }
+
+ property("Each line should have two space on the less outside chars than the line above it until widest line") =
+  forAll(genCharWithoutA) { ucwa: UpperCharWithoutA =>
+    val lines = upCharWithoutADiamondLines(ucwa)
+    val spaces = lines.map(_.takeWhile(_ == ' ').length).slice(0, lines.length / 2)
+    spaces.zip(spaces.tail).forall { case (s1, s2) => s1 - 1 == s2 } //this is for one side
+  }
+
+ property("Each line should be a mirror image of half itself") =
+  forAll(genCharWithoutA) { ucwa: UpperCharWithoutA =>
+    val lines = upCharWithoutADiamondLines(ucwa)
+    lines.forall {
+      case l =>
+        val length = l.length
+        val half   = length / 2
+        val left   = l.slice(0, half) //split each line down the middle
+        val right  = l.slice(half + 1, length)
+        left == right.reverse
+    }
+  }
 
  property("The number of lines should be the length of the any line") =
   forAll(genChar) { uc: UpperChar =>
