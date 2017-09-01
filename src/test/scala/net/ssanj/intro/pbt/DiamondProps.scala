@@ -24,8 +24,7 @@ object DiamondProps extends Properties("Diamond") with Diamond {
   private def genChar: Gen[UpperChar] = Gen.alphaUpperChar.map(UpperChar(_))
 
   property("Given a letter, the diamond will start with 'A'") =
-    forAll(genChar) { uc: UpperChar =>
-      val ch = uc.value
+    forAll { ch: Char =>
       printDiamond(ch).split("\n").head.contains("A")
     }
 

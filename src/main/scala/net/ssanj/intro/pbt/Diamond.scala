@@ -28,7 +28,7 @@ trait Diamond {
   }
 
   def printDiamond(supplied: Char): String = {
-    if (supplied == start) start.toString
+    if (supplied == start || !('A' to 'Z').contains(supplied)) start.toString
     else {
       val chars  = previousChars(supplied) //A
       val before = chars.foldLeft(Seq.empty[String])((acc, c) => acc :+ printChar(supplied, c))
