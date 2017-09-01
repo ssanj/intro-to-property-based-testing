@@ -63,7 +63,7 @@ object DiamondProps extends Properties("Diamond") with Diamond {
 
       val spaceWithLineIndex = above.tail.map(_.count(_ == ' ')).zipWithIndex
       spaceWithLineIndex.zip(spaceWithLineIndex.tail).forall{
-        case (first, second) => second._1 - first._1 == 1
+        case (first, second) => second._1 - first._1 == 2
       }
     }
 
