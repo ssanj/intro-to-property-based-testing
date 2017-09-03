@@ -83,7 +83,7 @@ object DiamondProps extends Properties("Diamond") with DiamondBroken {
       val (_, windex) = lines.map(_.trim.length).zipWithIndex.maxBy(_._1)
       val before = lines.slice(0, windex).toList
       val after  = lines.slice(windex + 1, lines.length).reverse.toList
-      (before == after) :| s"actual: [${before.mkString(",")}], expected: [${after.mkString(",")}]"
+      (before == after) :| s"> ACTUAL: [${before.mkString(",")}]\n> EXPECTED: [${after.mkString(",")}]"
     }
 
   property("Each line should have two spaces more in-between chars than the line above it until widest line") =
