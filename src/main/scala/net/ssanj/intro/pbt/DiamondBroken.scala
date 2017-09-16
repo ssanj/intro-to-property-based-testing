@@ -8,6 +8,14 @@ trait DiamondBroken {
 
   private val start = 'A'
 
+  val inChar = '*'
+
+  val outChar = '-'
+
+  val inString = inChar.toString
+
+  val outString = outChar.toString
+
   def instances(supplied: Char): Int = if (supplied == start) 1 else 2
 
  // def instances(supplied: Char): Int = if (supplied == start) 1 else 3 //add extra instances
@@ -24,8 +32,8 @@ trait DiamondBroken {
   // def previousChars(supplied: Char): Seq[Char] = (start until supplied).reverse //reverse order
 
   def printChar(supplied: Char, current: Char): String = {
-    val inside  = "*" * betweenSpace(current)
-    val outside = "-" * outerSpace(supplied, current)
+    val inside  = inString * betweenSpace(current)
+    val outside = outString * outerSpace(supplied, current)
     val values  = (1 to instances(current)).map(_ => current)
 
     // values.mkString(outside, inside, "") //remove outside space
