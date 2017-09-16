@@ -52,7 +52,7 @@ object DiamondProps extends Properties("Diamond") with DiamondBroken {
       val lines = upCharWithoutADiamondLines(ucwa)
       val ((wline, _), windex) = lines.map(l => (l, l.filterNot(_ == outChar).length)).zipWithIndex.maxBy(_._1._2)
 
-      ((wline.count(_ == ch) ?= 2) :| s"> EXPECTED: 2 '$ch'\n> GOT: $wline") && 
+      ((wline.count(_ == ch) ?= 2) :| s"> EXPECTED: 2 '$ch'\n> GOT: $wline") &&
         wline.filterNot(c => c == ch || c == inChar).isEmpty :| s"expected only inChar other than [$ch] but got [$wline]"
     }
 
