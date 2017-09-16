@@ -24,8 +24,8 @@ trait DiamondBroken {
   // def previousChars(supplied: Char): Seq[Char] = (start until supplied).reverse //reverse order
 
   def printChar(supplied: Char, current: Char): String = {
-    val inside  = " " * betweenSpace(current)
-    val outside = " " * outerSpace(supplied, current)
+    val inside  = "*" * betweenSpace(current)
+    val outside = "-" * outerSpace(supplied, current)
     val values  = (1 to instances(current)).map(_ => current)
 
     // values.mkString(outside, inside, "") //remove outside space
