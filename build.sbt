@@ -7,7 +7,6 @@ version := "0.0.1"
 scalaVersion := "2.12.1"
 
 libraryDependencies ++= Seq(
-  "org.scalaz"     %% "scalaz-core" % "7.2.9",
   "org.scalatest"  %% "scalatest"   % "3.0.1"  % "test",
   "org.scalacheck" %% "scalacheck"  % "1.13.4" % "test"
 )
@@ -30,5 +29,5 @@ scalacOptions in (Compile, console) ~= (_.filterNot(Seq("-Xfatal-warnings", "-Yw
 
 scalacOptions in (Test, console) := (scalacOptions in (Compile, console)).value
 
-initialCommands := "import net.ssanj.intro.pbt._"
+initialCommands := "import net.ssanj.intro.pbt._\nimport org.scalacheck._"
 

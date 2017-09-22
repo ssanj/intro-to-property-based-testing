@@ -35,7 +35,7 @@ final class DiamondTest extends Matchers with WordSpecLike with DiamondBroken {
     }
 
     "return a diamond for 'E'" when {
-      "given a 'E'" in {
+      "given an 'E'" in {
         val diamondE =
           """|----A----
              |---B*B---
