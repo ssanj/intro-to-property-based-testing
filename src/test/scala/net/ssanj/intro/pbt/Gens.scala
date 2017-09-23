@@ -4,6 +4,7 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.Gen
 
 object Gens {
+
   def genWord: Gen[String] = for {
     w    <- Gen.choose(5, 10)
     word <- Gen.listOfN(w, Gen.frequency(1 -> Gen.alphaUpperChar, 1 -> Gen.alphaLowerChar))

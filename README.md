@@ -16,6 +16,7 @@ It covers the following:
 1. [Addition](https://github.com/ssanj/intro-to-property-based-testing/blob/master/src/main/scala/net/ssanj/intro/pbt/Addition.scala) [EBT](https://github.com/ssanj/intro-to-property-based-testing/blob/master/src/test/scala/net/ssanj/intro/pbt/AdditionTest.scala) [PBT](https://github.com/ssanj/intro-to-property-based-testing/blob/master/src/test/scala/net/ssanj/intro/pbt/AdditionProps.scala)
 1. [ToAsciiUpperCase](https://github.com/ssanj/intro-to-property-based-testing/blob/master/src/main/scala/net/ssanj/intro/pbt/ToAsciiUpperCase.scala) [EBT](https://github.com/ssanj/intro-to-property-based-testing/blob/master/src/test/scala/net/ssanj/intro/pbt/ToAsciiUpperCaseTest.scala) [PBT](https://github.com/ssanj/intro-to-property-based-testing/blob/master/src/test/scala/net/ssanj/intro/pbt/ToAsciiUpperCaseProps.scala)
 1. [Generators](https://github.com/ssanj/intro-to-property-based-testing/blob/master/src/test/scala/net/ssanj/intro/pbt/Gens.scala)
+1. [Diamond Kata](https://github.com/ssanj/intro-to-property-based-testing/blob/master/src/main/scala/net/ssanj/intro/pbt/Diamond.scala) [EBT](https://github.com/ssanj/intro-to-property-based-testing/blob/master/src/test/scala/net/ssanj/intro/pbt/DiamondTest.scala) [PBT](https://github.com/ssanj/intro-to-property-based-testing/blob/master/src/test/scala/net/ssanj/intro/pbt/DiamondProps.scala)
 
 
 To continuously run any test through SBT use:
@@ -52,7 +53,8 @@ test:run -s 10000
 
 ## Presentation ##
 
-See [intro-to-property-based-testing.key](https://github.com/ssanj/intro-to-property-based-testing/blob/master/intro-to-property-based-testing.key)
+1. See [intro-to-property-based-testing.key](https://github.com/ssanj/intro-to-property-based-testing/blob/master/intro-to-property-based-testing.key)
+1. See [intro-to-property-based-testing-simple-msug.key](https://github.com/ssanj/intro-to-property-based-testing/blob/master/intro-to-property-based-testing-simple-msug.key)
 
 ## Links ##
 
