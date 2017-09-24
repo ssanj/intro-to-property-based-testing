@@ -38,7 +38,7 @@ object DiamondProps extends Properties("Diamond") with DiamondBroken {
 
   property("Given any character, the diamond will start with 'A'") =
     forAll { ch: Char =>
-      printDiamond(ch).split("\n").head.contains("A")
+      diamondLines(ch).head.contains("A")
     }
 
   property("Given any uppercase character, the diamond will end with 'A'") =
